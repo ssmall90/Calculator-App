@@ -8,13 +8,13 @@
 
 <div class="calculator">
         <div class="display-container">
-            @calc1
+            @currentCalculation
         </div>
     <div class="buttons-container">
         <div class="row1-buttons button-row">
-            <btn class="ac-button calcbutton">AC</btn>
-            <button @onclick="() => RemoveCharacter(c)" class="c-button calcbutton">C</button>
-            <btn class="percentage-button calcbutton">%</btn>
+            <button @onclick="() => RemoveCharacter(currentCalculation.ToString())" class="ac-button calcbutton">AC</button>
+            <button @onclick="() => RemoveLastEntry()" class="c-button calcbutton">C</button>
+            <button @onclick="() => Percentage()" class="percentage-button calcbutton">%</button>
             <button @onclick="() => UpdateOperator(divide)" class="division-button calcbutton">/</button>
         </div>
         <div class="row2-buttons button-row">
@@ -37,60 +37,123 @@
         </div>
         <div class="row5-buttons button-row">
             <button @onclick="() => UpdateHeading(0.ToString())" class="number-button calcbutton">0</button>
-            <btn class="row5-decimal-button calcbutton">.</btn>
-            <button @onclick="() => Calculate(calc1.ToString())" class="row5-equals-button calcbutton">=</button>
+            <button @onclick="() => UpdateHeading(decimalPoint.ToString())" class="row5-decimal-button calcbutton">.</button>
+            <button @onclick="() => Calculate(currentCalculation.ToString())" class="row5-equals-button calcbutton">=</button>
         </div>
     </div>
 </div>
 
 @code{
-    private StringBuilder calc1 = new StringBuilder();
-    private string? currentCalc;
+    private StringBuilder currentCalculation = new StringBuilder().Append("0");
     private string c = "c";
     private string multiply = "x";
     private string subtract = "-";
     private string divide = "/";
     private string add = "+";
+    private string decimalPoint = ".";
 
     private void UpdateHeading(string character)
     {
+        if (currentCalculation.ToString() == "0" || currentCalculation.ToString() =="Error")
+        {
+            currentCalculation.Clear();
+            currentCalculation.Append(character);
+        }
 
-        calc1.Append(character);
+        else
+        {
+            currentCalculation.Append(character);
+        }
+    }
+
+    private void PercentageOperator(string character)
+    {
+
+    }
+
+    private void DisplayCurrentCalculation(string pCalculation)
+    {
+        currentCalculation = currentCalculation;
     }
 
     private void UpdateOperator(string character)
     {
         if (character == add || character == subtract || character == multiply || character == divide)
         {
-            if (calc1.ToString().Split(" ").Contains(add) || calc1.ToString().Split(" ").Contains(subtract) || calc1.ToString().Split(" ").Contains(multiply) || calc1.ToString().Split(" ").Contains(divide))
+            if (currentCalculation.ToString().Split(" ").Contains(add) || currentCalculation.ToString().Split(" ").Contains(subtract) || currentCalculation.ToString().Split(" ").Contains(multiply) || currentCalculation.ToString().Split(" ").Contains(divide))
             {
-                Calculate(calc1.ToString());
+                Calculate(currentCalculation.ToString());
+                currentCalculation.Append(" " + character + " ");
+
             }
             else
             {
-                calc1.Append(" " + character + " ");
+                currentCalculation.Append(" " + character + " ");
             }
         }
         else
         {
-            calc1.Append(" " + character + " ");
+            currentCalculation.Append(" " + character + " ");
         }
 
     }
 
     private void RemoveCharacter(string character)
     {
-        if(calc1 is not null || calc1.Length > 0)
+        if(currentCalculation is not null || currentCalculation.Length > 0)
         {
+            currentCalculation.Clear();
+            currentCalculation.Append("0");
 
-            calc1.Clear();
         }
 
+    }
+
+    private void RemoveLastEntry()
+    {
+        string lastDisplay = currentCalculation.ToString().Split(" ")[0];
+        currentCalculation.Clear();
+        currentCalculation.Append(lastDisplay);
     }
 
     private float Add(float pVal1, float pVal2)
     {
         return (pVal1 + pVal2);
+    }
+
+    private void Percentage()
+    {
+        if (currentCalculation.ToString().Split(" ").Length > 1)
+        {
+            try
+            {
+                float firstVal = float.Parse(currentCalculation.ToString().Split(" ")[0]);
+
+                currentCalculation.Clear();
+                currentCalculation.Append(firstVal / 100);
+            }
+            catch (Exception ex)
+            {
+                currentCalculation.Clear();
+                currentCalculation.Append("Error");
+            }
+        }
+        else
+        {
+            try
+            {
+                float currentVal = float.Parse(currentCalculation.ToString());
+                currentCalculation.Clear();
+                currentCalculation.Append(currentVal / 100);
+                
+            }
+            catch (Exception ex)
+            {
+                currentCalculation.Clear();
+                currentCalculation.Append("Error");
+            }
+        }
+
     }
 
     private float Subtract(float pVal1, float pVal2)
@@ -116,41 +179,65 @@
         {
 
             string[] calculationSeperated = pCalculation.Split(' ');
-            calc1.Clear();
+            // currentCalculation.Clear();
 
             if(calculationSeperated.Length > 2 && !calculationSeperated.Contains(""))
             {
-                float val1 = float.Parse(calculationSeperated[0]);
-                float val2 = float.Parse(calculationSeperated[2]);
-                float output = 0;
-
-                switch (calculationSeperated[1])
+                try
                 {
-                    case "+":
-                        output = Add(val1, val2);
-                        UpdateHeading(output.ToString());
-                        break;
+                    float val1 = float.Parse(calculationSeperated[0]);
+                    float val2 = float.Parse(calculationSeperated[2]);
+                    float output = 0;
 
-                    case "-":
-                        output = Subtract(val1, val2);
-                        UpdateHeading(output.ToString());
-                        break;
+                    switch (calculationSeperated[1])
+                    {
+                        case "+":
+                            output = Add(val1, val2);
+                            RemoveCharacter(pCalculation);
+                            UpdateHeading(output.ToString());
+                            break;
 
-                    case "/":
-                        output = Divide(val1, val2);
-                        UpdateHeading(output.ToString());
-                        break;
+                        case "-":
+                            output = Subtract(val1, val2);
+                            RemoveCharacter(pCalculation);
+                            UpdateHeading(output.ToString());
+                            break;
 
-                    case "x":
-                        output = Multiply(val1, val2);
-                        UpdateHeading(output.ToString());
-                        break;
+                        case "/":
+                            output = Divide(val1, val2);
+                            RemoveCharacter(pCalculation);
+                            UpdateHeading(output.ToString());
+                            break;
 
-                    default: break;
+                        case "x":
+                            output = Multiply(val1, val2);
+                            RemoveCharacter(pCalculation);
+                            UpdateHeading(output.ToString());
+                            break;
 
+                        default: break;
+
+                    }
                 }
+                catch (Exception ex)
+                {
+
+                    currentCalculation.Clear();
+                    currentCalculation.Append("Error");
+                }
+                
             }
 
+            else
+            {
+                DisplayCurrentCalculation(currentCalculation.ToString());
+            }
+
+        }
+
+        else
+        {
+            DisplayCurrentCalculation(currentCalculation.ToString());
         }
 
     }
