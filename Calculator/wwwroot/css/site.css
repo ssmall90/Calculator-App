@@ -1,11 +1,27 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,700;1,900&display=swap');
+
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    color: #FFFFFF
 }
 
 h1:focus {
     outline: none;
+}
+
+body {
+    background: url(../Images/Background-image.jpg) no-repeat center center fixed;
+    background-size: cover;
+    height: 100%;
+    color: #000000;
 }
 
 a, .btn-link {
@@ -63,21 +79,40 @@ a, .btn-link {
         content: "An error has occurred."
     }
 
+
+.calculator-container{
+    display:flex;
+    justify-content: center;
+}
+
 .calculator{
     display: grid;
     grid-template-rows:1fr 3fr;
     grid-row-gap: 10px;
-    width: 400px;
-    height: 400px;
-    background-color: red;
+    width: 350px;
+    height: 500px;
+    background-color: #000000;
     border-radius:15px;
+    border: solid black 10px;
 }
 
 .display-container {
+    display: flex;
+    max-width: 330px;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding-right: 15px;
+    padding-bottom: 10px;
     margin-top: 10px;
     background-color: white;
     border-radius: 15px;
+    font-size: 28px;
+    font-weight: 700;
+    text-align:end;
+
 }
+
+
 
 .buttons-container {
     display:grid;
@@ -93,26 +128,51 @@ a, .btn-link {
     grid-template-rows: 1fr;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-column-gap: 10px;
-    background-color: grey;
+    background-color: #000000;
 
 }
 
 .row5-buttons {
     display: grid;
     grid-template-rows: 1fr;
-    grid-template-columns: 195px 1fr 1fr;
+    grid-template-columns: 161px 1fr 1fr;
     grid-column-gap: 10px;
-    background-color: grey;
+    background-color: #000000;
 }
 
 .row5-number-button{
 
 }
 
+.division-button,
+.multiply-button,
+.subtract-button,
+.addition-button {
+    background-color: #AFABFF;
+}
 
 
 .calcbutton {
-    border: 1px solid black;
-    border-radius: 5px;
+    border: 5px solid #FFFFFF;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 38px;
 }
+
+.number-button {
+    background-color: #D8D8D8;
+}
+
+.ac-button,
+.c-button {
+    background-color: #FF0000;
+}
+
+.percentage-button,
+.row5-decimal-button{
+    background-color: #7DB9B2;
+}
+
+.row5-equals-button {
+    background-color:#29D000
 }
