@@ -12,7 +12,7 @@
         </div>
     <div class="buttons-container">
         <div class="row1-buttons button-row">
-            <button @onclick="() => RemoveCharacter(currentCalculation.ToString())" class="ac-button calcbutton">AC</button>
+            <button @onclick="() => ClearDisplay(currentCalculation.ToString())" class="ac-button calcbutton">AC</button>
             <button @onclick="() => RemoveLastEntry()" class="c-button calcbutton">C</button>
             <button @onclick="() => Percentage()" class="percentage-button calcbutton">%</button>
             <button @onclick="() => UpdateOperator(divide)" class="division-button calcbutton">/</button>
@@ -98,7 +98,7 @@
 
     }
 
-    private void RemoveCharacter(string character)
+    private void ClearDisplay(string character)
     {
         if(currentCalculation is not null || currentCalculation.Length > 0)
         {
@@ -193,25 +193,25 @@
                     {
                         case "+":
                             output = Add(val1, val2);
-                            RemoveCharacter(pCalculation);
+                            ClearDisplay(pCalculation);
                             UpdateHeading(output.ToString());
                             break;
 
                         case "-":
                             output = Subtract(val1, val2);
-                            RemoveCharacter(pCalculation);
+                            ClearDisplay(pCalculation);
                             UpdateHeading(output.ToString());
                             break;
 
                         case "/":
                             output = Divide(val1, val2);
-                            RemoveCharacter(pCalculation);
+                            ClearDisplay(pCalculation);
                             UpdateHeading(output.ToString());
                             break;
 
                         case "x":
                             output = Multiply(val1, val2);
-                            RemoveCharacter(pCalculation);
+                            ClearDisplay(pCalculation);
                             UpdateHeading(output.ToString());
                             break;
 
