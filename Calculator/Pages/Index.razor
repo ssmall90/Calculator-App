@@ -5,43 +5,44 @@
 
 <h1>Calculator</h1>
 
-
-<div class="calculator">
-        <div class="display-container">
-            @currentCalculation
-        </div>
-    <div class="buttons-container">
-        <div class="row1-buttons button-row">
-            <button @onclick="() => ClearDisplay(currentCalculation.ToString())" class="ac-button calcbutton">AC</button>
-            <button @onclick="() => RemoveLastEntry()" class="c-button calcbutton">C</button>
-            <button @onclick="() => Percentage()" class="percentage-button calcbutton">%</button>
-            <button @onclick="() => UpdateOperator(divide)" class="division-button calcbutton">/</button>
-        </div>
-        <div class="row2-buttons button-row">
-            <button @onclick="() => UpdateHeading(1.ToString())" class="number-button calcbutton">1</button>
-            <button @onclick="() => UpdateHeading(2.ToString())" class="number-button calcbutton">2</button>
-            <button @onclick="() => UpdateHeading(3.ToString())" class="number-button calcbutton">3</button>
-            <button @onclick="() => UpdateOperator(multiply)" class="multiply-button calcbutton">x</button>
-        </div>
-        <div class="row3-buttons button-row">
-            <button @onclick="() => UpdateHeading(4.ToString())" class="number-button calcbutton">4</button>
-            <button @onclick="() => UpdateHeading(5.ToString())" class="number-button calcbutton">5</button>
-            <button @onclick="() => UpdateHeading(6.ToString())" class="number-button calcbutton">6</button>
-            <button @onclick="() => UpdateOperator(subtract)" class="subtract-button calcbutton">-</button>
-        </div>
-        <div class="row4-buttons button-row">
-            <button @onclick="() => UpdateHeading(7.ToString())" class="number-button calcbutton">7</button>
-            <button @onclick="() => UpdateHeading(8.ToString())" class="number-button calcbutton">8</button>
-            <button @onclick="() => UpdateHeading(9.ToString())" class="number-button calcbutton">9</button>
-            <button @onclick="() => UpdateOperator(add)" class="addition-button calcbutton">+</button>
-        </div>
-        <div class="row5-buttons button-row">
-            <button @onclick="() => UpdateHeading(0.ToString())" class="number-button calcbutton">0</button>
-            <button @onclick="() => UpdateHeading(decimalPoint.ToString())" class="row5-decimal-button calcbutton">.</button>
-            <button @onclick="() => Calculate(currentCalculation.ToString())" class="row5-equals-button calcbutton">=</button>
+<div class=" calculator-container">
+    <div class="calculator">
+        <div class="display-container resizable-text" style="font-size: @CalculateFontSize()">@currentCalculation</div>
+        <div class="buttons-container">
+            <div class="row1-buttons button-row">
+                <button @onclick="() => ClearDisplay(currentCalculation.ToString())" class="ac-button calcbutton">AC</button>
+                <button @onclick="() => RemoveLastEntry()" class="c-button calcbutton">C</button>
+                <button @onclick="() => Percentage()" class="percentage-button calcbutton">%</button>
+                <button @onclick="() => UpdateOperator(divide)" class="division-button calcbutton">/</button>
+            </div>
+            <div class="row2-buttons button-row">
+                <button @onclick="() => UpdateHeading(1.ToString())" class="number-button calcbutton">1</button>
+                <button @onclick="() => UpdateHeading(2.ToString())" class="number-button calcbutton">2</button>
+                <button @onclick="() => UpdateHeading(3.ToString())" class="number-button calcbutton">3</button>
+                <button @onclick="() => UpdateOperator(multiply)" class="multiply-button calcbutton">x</button>
+            </div>
+            <div class="row3-buttons button-row">
+                <button @onclick="() => UpdateHeading(4.ToString())" class="number-button calcbutton">4</button>
+                <button @onclick="() => UpdateHeading(5.ToString())" class="number-button calcbutton">5</button>
+                <button @onclick="() => UpdateHeading(6.ToString())" class="number-button calcbutton">6</button>
+                <button @onclick="() => UpdateOperator(subtract)" class="subtract-button calcbutton">-</button>
+            </div>
+            <div class="row4-buttons button-row">
+                <button @onclick="() => UpdateHeading(7.ToString())" class="number-button calcbutton">7</button>
+                <button @onclick="() => UpdateHeading(8.ToString())" class="number-button calcbutton">8</button>
+                <button @onclick="() => UpdateHeading(9.ToString())" class="number-button calcbutton">9</button>
+                <button @onclick="() => UpdateOperator(add)" class="addition-button calcbutton">+</button>
+            </div>
+            <div class="row5-buttons button-row">
+                <button @onclick="() => UpdateHeading(0.ToString())" class="number-button calcbutton">0</button>
+                <button @onclick="() => UpdateHeading(decimalPoint.ToString())" class="row5-decimal-button calcbutton">.</button>
+                <button @onclick="() => Calculate(currentCalculation.ToString())" class="row5-equals-button calcbutton">=</button>
+            </div>
         </div>
     </div>
 </div>
+
+
 
 @code{
     private StringBuilder currentCalculation = new StringBuilder().Append("0");
@@ -51,19 +52,34 @@
     private string divide = "/";
     private string add = "+";
     private string decimalPoint = ".";
+    private int maxInputLength = 28;
 
     private void UpdateHeading(string character)
     {
-        if (currentCalculation.ToString() == "0" || currentCalculation.ToString() =="Error")
+
+        if (currentCalculation.ToString() == "0" || currentCalculation.ToString() == "Error")
         {
             currentCalculation.Clear();
             currentCalculation.Append(character);
         }
-
-        else
+        else if (currentCalculation.Length < maxInputLength/2)
         {
             currentCalculation.Append(character);
         }
+        else if(currentCalculation.Length >= maxInputLength)
+        {
+            if(character == add || character == subtract || character == divide || character == multiply)
+            {
+                currentCalculation.Append(character);
+            }
+        }
+        else if (currentCalculation.Length >= maxInputLength/2 && 
+                 currentCalculation.Length < maxInputLength &&
+                 (currentCalculation.ToString().Contains(add) || currentCalculation.ToString().Contains(subtract) || currentCalculation.ToString().Contains(multiply) || currentCalculation.ToString().Contains(divide)))
+        {
+            currentCalculation.Append(character);
+        }
+
     }
 
     private void PercentageOperator(string character)
@@ -240,6 +256,19 @@
             DisplayCurrentCalculation(currentCalculation.ToString());
         }
 
+    }
+
+    private string CalculateFontSize()
+    {
+        int maxLength = 17; 
+        int textLength = currentCalculation.Length;
+        double baseFontSize = 28; 
+        double scaleFactor = 0.7; 
+
+
+        double fontSize = textLength > maxLength ? baseFontSize * scaleFactor : baseFontSize;
+
+        return $"{fontSize}px";
     }
 
 }
